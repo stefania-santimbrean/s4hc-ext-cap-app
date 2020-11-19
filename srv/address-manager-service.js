@@ -1,5 +1,13 @@
 const cds = require('@sap/cds');
 
+const { BusinessPartnerAddress } = require("@sap/cloud-sdk-vdm-business-partner-service");
+const sdkDest = { "destinationName": 's4hc_simple' };
+const {
+    buildAddressForCreate,
+    buildAddressForUpdate,
+    prepareResult
+} = require('./helpers')
+
 //here is the service implementation
 //here are the service handlers
 module.exports = cds.service.impl(async function () {
@@ -82,6 +90,71 @@ module.exports = cds.service.impl(async function () {
             }
 
             return result;
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+
+    //this event handler is triggered when we call
+    //POST http://localhost:4004/address-manager/BusinessPartnerAddresses
+    /*
+    Request body sample:
+    {
+    "BusinessPartner": "10300001",
+    "CityName": "string",
+    "Country": "DE",
+    "HouseNumber": "string",
+    "PostalCode": "12345",
+    "StreetName": "string"
+    }
+    */
+    this.on('CREATE', BusinessPartnerAddresses, async (req) => {
+        try {
+            const address = buildAddressForCreate(req);
+            const result = await BusinessPartnerAddress
+                .requestBuilder()
+                .create(address)
+                .execute(sdkDest);
+            return prepareResult(result);
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+
+    //this event handler is triggered when we call
+    //PUT http://localhost:4004/address-manager/BusinessPartnerAddresses
+    /*
+    Request body sample:
+    {
+    "CityName": "string",
+    "Country": "DE",
+    "HouseNumber": "string",
+    "PostalCode": "12345",
+    "StreetName": "string"
+    }
+    */
+    this.on('UPDATE', BusinessPartnerAddresses, async (req) => {
+        try {
+            const address = buildAddressForUpdate(req);
+            const result = await BusinessPartnerAddress
+                .requestBuilder()
+                .update(address)
+                .execute(sdkDest);
+            return prepareResult(result);
+        } catch (err) {
+            req.reject(err);
+        }
+    });
+
+    //this event handler is triggered when we call
+    //DELETE http://localhost:4004/address-manager/BusinessPartnerAddresses
+    this.on('DELETE', BusinessPartnerAddresses, async (req) => {
+        try {
+            const { BusinessPartner, AddressID } = req.params[0];
+            await BusinessPartnerAddress
+                .requestBuilder()
+                .delete(BusinessPartner, AddressID)
+                .execute(sdkDest);
         } catch (err) {
             req.reject(err);
         }
