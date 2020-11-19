@@ -16,21 +16,17 @@ module.exports = cds.service.impl(async function () {
     this.on('READ', BusinessPartners, async (req) => {
         try {
             const tx = service.transaction();
-            let resultUsingHeaders = {};
+            let result = {};
             //entity name as it is in the .csn file for the service API_BUSINESS_PARTNER
             let entity = 'A_BusinessPartner';
             //columns which we have declared in cds entity that we want to expose
             let columnsToSelect = ["BusinessPartner", "FirstName", "LastName"];
 
-            resultUsingHeaders = await tx.emit({
-                query: SELECT.from(entity)
-                    .columns(columnsToSelect),
-                //For API Business Hub usage, we send custom APIKey header
-                headers: {
-                    "APIKey": process.env.S4_APIKEY
-                }
-            })
-            return resultUsingHeaders;
+            result = await tx.run(
+                SELECT.from(entity)
+                    .columns(columnsToSelect)
+            )
+            return result;
 
         } catch (err) {
             req.reject(err);
@@ -42,22 +38,18 @@ module.exports = cds.service.impl(async function () {
     this.on('READ', BusinessPartnerAddresses, async (req) => {
         try {
             const tx = service.transaction();
-            let resultUsingHeaders = {};
+            let result = {};
             //entity name as it is in the .csn file for the service API_BUSINESS_PARTNER
             let entity = 'A_BusinessPartnerAddress';
             //columns which we have declared in cds entity that we want to expose
             let columnsToSelect = ["BusinessPartner", "AddressID", "Country", "PostalCode", "CityName", "StreetName", "HouseNumber"];
 
-            resultUsingHeaders = await tx.emit({
-                query: SELECT.from(entity)
-                    .columns(columnsToSelect),
-                //For API Business Hub usage, we send custom APIKey header
-                headers: {
-                    "APIKey": process.env.S4_APIKEY
-                }
-            })
+            result = await tx.run(
+                SELECT.from(entity)
+                    .columns(columnsToSelect)
+            )
 
-            return resultUsingHeaders;
+            return result;
         } catch (err) {
             req.reject(err);
         }

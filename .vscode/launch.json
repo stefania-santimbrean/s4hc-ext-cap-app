@@ -11,10 +11,16 @@
       "type": "node-terminal",
       "skipFiles": [
         "<node_internals>/**"
-      ],
-      "env": {
-        "S4_APIKEY": "8JLQURhRAeEH8OHgXFTXcfmW6H0vrW5V"
-      }
+      ]
+    },
+    {
+      "command": "cds watch",
+      "name": "cds watch",
+      "request": "launch",
+      "type": "node-terminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
     }
   ]
 }
