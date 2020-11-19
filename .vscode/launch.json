@@ -9,7 +9,12 @@
       "name": "cds run",
       "request": "launch",
       "type": "node-terminal",
-      "skipFiles": [ "<node_internals>/**" ]
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "env": {
+        "S4_APIKEY": "8JLQURhRAeEH8OHgXFTXcfmW6H0vrW5V"
+      }
     }
   ]
 }
