@@ -22,10 +22,24 @@ module.exports = cds.service.impl(async function () {
             //columns which we have declared in cds entity that we want to expose
             let columnsToSelect = ["BusinessPartner", "FirstName", "LastName"];
 
-            result = await tx.run(
-                SELECT.from(entity)
-                    .columns(columnsToSelect)
-            )
+            //if there is a parameter
+            if (req.params[0]) {
+                //If you look in the .csn file you will see that
+                //the key for our BusinessPartner entity is BusinessPartner column
+                const businessPartner = req.params[0].BusinessPartner;
+                result = await tx.run(
+                    SELECT.from(entity)
+                        .columns(columnsToSelect)
+                        .where({ 'BusinessPartner': businessPartner })
+                )
+            } else {
+                //if no parameter, we read all Business Partners
+                result = await tx.run(
+                    SELECT.from(entity)
+                        .columns(columnsToSelect)
+                )
+            }
+
             return result;
 
         } catch (err) {
@@ -44,10 +58,28 @@ module.exports = cds.service.impl(async function () {
             //columns which we have declared in cds entity that we want to expose
             let columnsToSelect = ["BusinessPartner", "AddressID", "Country", "PostalCode", "CityName", "StreetName", "HouseNumber"];
 
-            result = await tx.run(
-                SELECT.from(entity)
-                    .columns(columnsToSelect)
-            )
+            //if there is parameter
+            if (req.params[0]) {
+                //If you look in the .csn file you will see that
+                //the keys for our BusinessPartnerAddress entity are
+                //BusinessPartner and AddressID columns
+                const businessPartner = req.params[0].BusinessPartner;
+                const addressId = req.params[0].AddressID;
+                result = await tx.run(
+                    SELECT.from(entity)
+                        .columns(columnsToSelect)
+                        .where({
+                            'BusinessPartner': businessPartner,
+                            'AddressID': addressId
+                        })
+                )
+            } else {
+                //if no parameter, we read all Business Partner Addresses
+                result = await tx.run(
+                    SELECT.from(entity)
+                        .columns(columnsToSelect)
+                )
+            }
 
             return result;
         } catch (err) {
