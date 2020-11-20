@@ -41,11 +41,23 @@ module.exports = cds.service.impl(async function () {
                         .where({ 'BusinessPartner': businessPartner })
                 )
             } else {
-                //if no parameter, we read all Business Partners
-                result = await tx.run(
-                    SELECT.from(entity)
-                        .columns(columnsToSelect)
-                )
+                let searchQuery = req._.odataReq._queryOptions;
+                if ((searchQuery) && (searchQuery.$search)) {
+                    let searchValue = JSON.parse(searchQuery.$search);
+                    result = await tx.emit({
+                        query: SELECT.from(entity)
+                            .columns(columnsToSelect)
+                            .where(`BusinessPartner =`, searchValue,
+                                `or FirstName =`, searchValue,
+                                `or LastName =`, searchValue)
+                    })
+                } else {
+                    //if no parameter and no search query, we read all Business Partners
+                    result = await tx.run(
+                        SELECT.from(entity)
+                            .columns(columnsToSelect)
+                    )
+                }
             }
 
             return result;

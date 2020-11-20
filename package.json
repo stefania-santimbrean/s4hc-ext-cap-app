@@ -18,7 +18,8 @@
     "start": "npx cds run",
     "watch": "npx cds watch",
     "build": "mbt build -p=cf --mtar=AddressManager.mtar",
-    "deploy": "cf deploy mta_archives/AddressManager.mtar"
+    "deploy": "cf deploy mta_archives/AddressManager.mtar",
+    "ui": "cd app/address-manager-ui && npm start"
   },
   "cds": {
     "requires": {
