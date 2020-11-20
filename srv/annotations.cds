@@ -35,38 +35,68 @@ annotate AddressManagerService.BusinessPartners with @(UI : {
 
 });
 
-annotate AddressManagerService.BusinessPartnerAddresses with @(UI : {
+annotate AddressManagerService.BusinessPartnerAddresses with @(
+    Capabilities : {InsertRestrictions : {Insertable : false}},
+    UI           : {
 
-    HeaderInfo : {
-        TypeName       : 'Business Partner Address',
-        TypeNamePlural : 'Business Partner Addresses',
-        Title          : {Value : AddressID}
-    },
+        HeaderInfo          : {
+            TypeName       : 'Business Partner Address',
+            TypeNamePlural : 'Business Partner Addresses',
+            Title          : {Value : AddressID}
+        },
 
-    LineItem   : [
-    {
-        Value : AddressID,
-        Label : 'Address ID'
-    },
-    {
-        Value : Country,
-        Label : 'Country'
-    },
-    {
-        Value : PostalCode,
-        Label : 'Postal Code'
-    },
-    {
-        Value : CityName,
-        Label : 'City Name'
-    },
-    {
-        Value : StreetName,
-        Label : 'Street Name'
-    },
-    {
-        Value : HouseNumber,
-        Label : 'House Number'
+        LineItem            : [
+        {
+            Value : AddressID,
+            Label : 'Address ID'
+        },
+        {
+            Value : Country,
+            Label : 'Country'
+        },
+        {
+            Value : PostalCode,
+            Label : 'Postal Code'
+        },
+        {
+            Value : CityName,
+            Label : 'City Name'
+        },
+        {
+            Value : StreetName,
+            Label : 'Street Name'
+        },
+        {
+            Value : HouseNumber,
+            Label : 'House Number'
+        }
+        ],
+        Facets              : [{
+            $Type  : 'UI.ReferenceFacet',
+            Target : '@UI.FieldGroup#Address',
+            Label  : 'Address'
+        }],
+        FieldGroup #Address : {Data : [
+        {
+            Value : Country,
+            Label : 'Country'
+        },
+        {
+            Value : PostalCode,
+            Label : 'Postal Code'
+        },
+        {
+            Value : CityName,
+            Label : 'City Name'
+        },
+        {
+            Value : StreetName,
+            Label : 'Street Name'
+        },
+        {
+            Value : HouseNumber,
+            Label : 'House Number'
+        }
+        ]}
     }
-    ]
-});
+);
