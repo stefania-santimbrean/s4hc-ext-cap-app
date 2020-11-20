@@ -21,6 +21,7 @@ module.exports = cds.service.impl(async function () {
 
     //this event handler is triggered when we call
     //GET http://localhost:4004/address-manager/BusinessPartners
+    //GET http://localhost:4004/address-manager/BusinessPartners('1000000')
     this.on('READ', BusinessPartners, async (req) => {
         try {
             const tx = service.transaction();
@@ -69,6 +70,8 @@ module.exports = cds.service.impl(async function () {
 
     //this event handler is triggered when we call
     //GET http://localhost:4004/address-manager/BusinessPartnerAddresses
+    //GET http://localhost:4004/address-manager/BusinessPartnerAddresses(BusinessPartner='10300001',AddressID='24642')
+    //GET http://localhost:4004/address-manager/BusinessPartners('1000000')/to_BusinessPartnerAddress
     this.on('READ', BusinessPartnerAddresses, async (req) => {
         try {
             const tx = service.transaction();
@@ -85,14 +88,26 @@ module.exports = cds.service.impl(async function () {
                 //BusinessPartner and AddressID columns
                 const businessPartner = req.params[0].BusinessPartner;
                 const addressId = req.params[0].AddressID;
-                result = await tx.run(
-                    SELECT.from(entity)
-                        .columns(columnsToSelect)
-                        .where({
-                            'BusinessPartner': businessPartner,
-                            'AddressID': addressId
-                        })
-                )
+                if (addressId) {
+                    //select one BusinessPartnerAddress
+                    result = await tx.run(
+                        SELECT.from(entity)
+                            .columns(columnsToSelect)
+                            .where({
+                                'BusinessPartner': businessPartner,
+                                'AddressID': addressId
+                            })
+                    )
+                } else {
+                    //select all the BusinessPartnerAddresses for this BusinessPartner
+                    result = await tx.run(
+                        SELECT.from(entity)
+                            .columns(columnsToSelect)
+                            .where({
+                                'BusinessPartner': businessPartner
+                            })
+                    )
+                }
             } else {
                 //if no parameter, we read all Business Partner Addresses
                 result = await tx.run(

@@ -8,7 +8,10 @@ annotate AddressManagerService.BusinessPartners with @(UI : {
 
     HeaderInfo : {
         TypeName       : 'Business Partner',
-        TypeNamePlural : 'Business Partners'
+        TypeNamePlural : 'Business Partners',
+        Title          : {Value : BusinessPartner},
+        Description    : {Value : FirstName}
+
     },
     LineItem   : [
     {
@@ -24,4 +27,46 @@ annotate AddressManagerService.BusinessPartners with @(UI : {
         Label : 'First Name'
     }
     ],
+    Facets     : [{
+        $Type  : 'UI.ReferenceFacet',
+        Target : 'to_BusinessPartnerAddress/@UI.LineItem',
+        Label  : 'Business Partner Addresses'
+    }]
+
+});
+
+annotate AddressManagerService.BusinessPartnerAddresses with @(UI : {
+
+    HeaderInfo : {
+        TypeName       : 'Business Partner Address',
+        TypeNamePlural : 'Business Partner Addresses',
+        Title          : {Value : AddressID}
+    },
+
+    LineItem   : [
+    {
+        Value : AddressID,
+        Label : 'Address ID'
+    },
+    {
+        Value : Country,
+        Label : 'Country'
+    },
+    {
+        Value : PostalCode,
+        Label : 'Postal Code'
+    },
+    {
+        Value : CityName,
+        Label : 'City Name'
+    },
+    {
+        Value : StreetName,
+        Label : 'Street Name'
+    },
+    {
+        Value : HouseNumber,
+        Label : 'House Number'
+    }
+    ]
 });
