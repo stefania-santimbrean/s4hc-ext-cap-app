@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="AddressManagerService" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityContainer Name="EntityContainer" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="BusinessPartnerAddresses" EntityType="AddressManagerService.BusinessPartnerAddresses"/>
+                <EntitySet Name="BusinessPartners" EntityType="AddressManagerService.BusinessPartners"/>
+                <AssociationSet Name="BusinessPartners_to_BusinessPartnerAddress" Association="AddressManagerService.BusinessPartners_to_BusinessPartnerAddress">
+                    <End Role="BusinessPartners" EntitySet="BusinessPartners"/>
+                    <End Role="BusinessPartnerAddresses" EntitySet="BusinessPartnerAddresses"/>
+                </AssociationSet>
+            </EntityContainer>
+            <EntityType Name="BusinessPartnerAddresses">
+                <Key>
+                    <PropertyRef Name="BusinessPartner"/>
+                    <PropertyRef Name="AddressID"/>
+                </Key>
+                <Property Name="BusinessPartner" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="AddressID" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="Country" Type="Edm.String" MaxLength="3"/>
+                <Property Name="PostalCode" Type="Edm.String" MaxLength="10"/>
+                <Property Name="CityName" Type="Edm.String" MaxLength="40"/>
+                <Property Name="StreetName" Type="Edm.String" MaxLength="60"/>
+                <Property Name="HouseNumber" Type="Edm.String" MaxLength="10"/>
+            </EntityType>
+            <EntityType Name="BusinessPartners">
+                <Key>
+                    <PropertyRef Name="BusinessPartner"/>
+                </Key>
+                <Property Name="BusinessPartner" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="LastName" Type="Edm.String" MaxLength="40"/>
+                <Property Name="FirstName" Type="Edm.String" MaxLength="40"/>
+                <NavigationProperty Name="to_BusinessPartnerAddress" Relationship="AddressManagerService.BusinessPartners_to_BusinessPartnerAddress" FromRole="BusinessPartners" ToRole="BusinessPartnerAddresses"/>
+                <Property Name="to_BusinessPartnerAddress_BusinessPartner" Type="Edm.String" MaxLength="10"/>
+                <Property Name="to_BusinessPartnerAddress_AddressID" Type="Edm.String" MaxLength="10"/>
+            </EntityType>
+            <Association Name="BusinessPartners_to_BusinessPartnerAddress">
+                <End Role="BusinessPartners" Type="AddressManagerService.BusinessPartners" Multiplicity="*"/>
+                <End Role="BusinessPartnerAddresses" Type="AddressManagerService.BusinessPartnerAddresses" Multiplicity="*"/>
+            </Association>
+            <Annotations Target="AddressManagerService.EntityContainer/BusinessPartners" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
