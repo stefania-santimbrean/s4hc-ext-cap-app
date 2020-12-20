@@ -5,8 +5,13 @@ const sdkDest = { "destinationName": 's4hc_simple' };
 const {
     buildAddressForCreate,
     buildAddressForUpdate,
-    prepareResult
+    prepareResult,
+    constructBusinessPartnerAddressFilter,
+    constructBusinessPartnerFilter,
+    buildQuery
 } = require('./helpers')
+
+const { ENTITIES } = require('./constants');
 
 //here is the service implementation
 //here are the service handlers
@@ -19,53 +24,29 @@ module.exports = cds.service.impl(async function () {
     //which is declared in package.json in the cds requires section
     const service = await cds.connect.to('API_BUSINESS_PARTNER');
 
-    //this event handler is triggered when we call
-    //GET http://localhost:4004/address-manager/BusinessPartners
-    //GET http://localhost:4004/address-manager/BusinessPartners('1000000')
-    this.on('READ', BusinessPartners, async (req) => {
+    const _buildHandler = async (entityName, req, filterFunction) => {
         try {
-            const tx = service.transaction();
-            let result = {};
-            //entity name as it is in the .csn file for the service API_BUSINESS_PARTNER
-            let entity = 'A_BusinessPartner';
-            //columns which we have declared in cds entity that we want to expose
-            let columnsToSelect = ["BusinessPartner", "FirstName", "LastName"];
+            const { name: entity, columns } = ENTITIES[entityName];
+            const filter = filterFunction(req);
+            const query = buildQuery(entity, columns, filter);
 
-            //if there is a parameter
-            if (req.params[0]) {
-                //If you look in the .csn file you will see that
-                //the key for our BusinessPartner entity is BusinessPartner column
-                const businessPartner = req.params[0].BusinessPartner;
-                result = await tx.run(
-                    SELECT.from(entity)
-                        .columns(columnsToSelect)
-                        .where({ 'BusinessPartner': businessPartner })
-                )
-            } else {
-                let searchQuery = req._.odataReq._queryOptions;
-                if ((searchQuery) && (searchQuery.$search)) {
-                    let searchValue = JSON.parse(searchQuery.$search);
-                    result = await tx.emit({
-                        query: SELECT.from(entity)
-                            .columns(columnsToSelect)
-                            .where(`BusinessPartner =`, searchValue,
-                                `or FirstName =`, searchValue,
-                                `or LastName =`, searchValue)
-                    })
-                } else {
-                    //if no parameter and no search query, we read all Business Partners
-                    result = await tx.run(
-                        SELECT.from(entity)
-                            .columns(columnsToSelect)
-                    )
+            return await service.transaction().emit({
+                query: query,
+                headers: {
+                    "APIKey": "8JLQURhRAeEH8OHgXFTXcfmW6H0vrW5V"
                 }
-            }
-
-            return result;
+            })
 
         } catch (err) {
             req.reject(err);
         }
+    }
+
+    //this event handler is triggered when we call
+    //GET http://localhost:4004/address-manager/BusinessPartners
+    //GET http://localhost:4004/address-manager/BusinessPartners('1000000')
+    this.on('READ', BusinessPartners, async (req) => {
+        return await _buildHandler('BusinessPartner', req, constructBusinessPartnerFilter);
     });
 
     //this event handler is triggered when we call
@@ -73,53 +54,7 @@ module.exports = cds.service.impl(async function () {
     //GET http://localhost:4004/address-manager/BusinessPartnerAddresses(BusinessPartner='10300001',AddressID='24642')
     //GET http://localhost:4004/address-manager/BusinessPartners('1000000')/to_BusinessPartnerAddress
     this.on('READ', BusinessPartnerAddresses, async (req) => {
-        try {
-            const tx = service.transaction();
-            let result = {};
-            //entity name as it is in the .csn file for the service API_BUSINESS_PARTNER
-            let entity = 'A_BusinessPartnerAddress';
-            //columns which we have declared in cds entity that we want to expose
-            let columnsToSelect = ["BusinessPartner", "AddressID", "Country", "PostalCode", "CityName", "StreetName", "HouseNumber"];
-
-            //if there is parameter
-            if (req.params[0]) {
-                //If you look in the .csn file you will see that
-                //the keys for our BusinessPartnerAddress entity are
-                //BusinessPartner and AddressID columns
-                const businessPartner = req.params[0].BusinessPartner;
-                const addressId = req.params[0].AddressID;
-                if (addressId) {
-                    //select one BusinessPartnerAddress
-                    result = await tx.run(
-                        SELECT.from(entity)
-                            .columns(columnsToSelect)
-                            .where({
-                                'BusinessPartner': businessPartner,
-                                'AddressID': addressId
-                            })
-                    )
-                } else {
-                    //select all the BusinessPartnerAddresses for this BusinessPartner
-                    result = await tx.run(
-                        SELECT.from(entity)
-                            .columns(columnsToSelect)
-                            .where({
-                                'BusinessPartner': businessPartner
-                            })
-                    )
-                }
-            } else {
-                //if no parameter, we read all Business Partner Addresses
-                result = await tx.run(
-                    SELECT.from(entity)
-                        .columns(columnsToSelect)
-                )
-            }
-
-            return result;
-        } catch (err) {
-            req.reject(err);
-        }
+        return await _buildHandler('BusinessPartnerAddress', req, constructBusinessPartnerAddressFilter);
     });
 
     //this event handler is triggered when we call

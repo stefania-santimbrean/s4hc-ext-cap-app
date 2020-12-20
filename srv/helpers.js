@@ -1,6 +1,6 @@
 const { BusinessPartnerAddress } = require("@sap/cloud-sdk-vdm-business-partner-service");
 
-function prepareBody(address) {
+const _prepareBody = (address) => {
     return {
         businessPartner: address.BusinessPartner,
         country: address.Country,
@@ -11,8 +11,8 @@ function prepareBody(address) {
     }
 }
 
-function buildAddressForCreate(req) {
-    const address = BusinessPartnerAddress.builder().fromJson(prepareBody(req.data));
+const buildAddressForCreate = (req) => {
+    const address = BusinessPartnerAddress.builder().fromJson(_prepareBody(req.data));
     if (req.params[0]) {
         const { BusinessPartner } = req.params[0];
         address.businessPartner = BusinessPartner;
@@ -20,15 +20,15 @@ function buildAddressForCreate(req) {
     return address;
 }
 
-function buildAddressForUpdate(req) {
+const buildAddressForUpdate = (req) => {
     const { BusinessPartner, AddressID } = req.params[0];
-    const address = BusinessPartnerAddress.builder().fromJson(prepareBody(req.data));
+    const address = BusinessPartnerAddress.builder().fromJson(_prepareBody(req.data));
     address.businessPartner = BusinessPartner;
     address.addressId = AddressID;
     return address;
 }
 
-function prepareResult(address) {
+const prepareResult = (address) => {
     return {
         BusinessPartner: address.businessPartner,
         AddressID: address.addressId,
@@ -40,8 +40,45 @@ function prepareResult(address) {
     }
 }
 
+
+const constructBusinessPartnerFilter = (req) => {
+    if (req && req.params && req.params[0]) {
+        return {
+            'BusinessPartner': req.params[0].BusinessPartner
+        }
+    } else if (req && req._.odataReq._queryOptions && req._.odataReq._queryOptions.$search) {
+        const searchValue = JSON.parse(req._.odataReq._queryOptions.$search);
+        return `BusinessPartner = ${searchValue} or FirstName = ${searchValue} or LastName = ${searchValue}`
+    }
+}
+
+const constructBusinessPartnerAddressFilter = (req) => {
+    if (req && req.params && req.params[0]) {
+        return req.params[0].AddressID ? {
+            'BusinessPartner': req.params[0].BusinessPartner,
+            'AddressID': req.params[0].AddressID
+        } : {
+                'BusinessPartner': req.params[0].BusinessPartner
+            }
+    }
+}
+
+const buildQuery = (entity, columns, filter) => {
+    if (filter) {
+        return SELECT.from(entity)
+            .columns(columns)
+            .where(filter)
+    } else {
+        return SELECT.from(entity)
+            .columns(columns)
+    }
+}
+
 module.exports = {
     buildAddressForCreate,
     buildAddressForUpdate,
-    prepareResult
+    prepareResult,
+    constructBusinessPartnerAddressFilter,
+    constructBusinessPartnerFilter,
+    buildQuery
 }
