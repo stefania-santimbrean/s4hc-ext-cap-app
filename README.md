@@ -133,6 +133,11 @@ Step | Commit
 8 | [List Report annotations and search implementation](https://github.com/stefania-santimbrean/s4hc-ext-cap-app/tree/6b3ded299e44b0b57dc5cb433715a516952f4b2c) |
 9 | [Object Page annotations](https://github.com/stefania-santimbrean/s4hc-ext-cap-app/tree/957d05ba0eb19e16ca9c455567ad6b3e2f13eed3) |
 10 | [CREATE, UPDATE, DELETE annotations](https://github.com/stefania-santimbrean/s4hc-ext-cap-app/tree/f9f702bc2515e58460c4e8a5b87d1945dadbd47d) |
+10 | [READ service handlers refactoring](https://github.com/stefania-santimbrean/s4hc-ext-cap-app/commit/3b420974bafcf97c46552dc7ab5fb4168f02bca4) |
 
-**Blogpost coming soon**
+
+**Blogposts:**
+[Part 0](https://blogs.sap.com/2020/11/27/part-0-how-to-build-an-extension-application-for-sap-s-4-hana-cloud-using-cap-sap-cloud-sdk-and-sap-fiori-elements/)
+[Part 1](https://blogs.sap.com/2020/12/01/part-1-how-to-build-an-extension-application-for-sap-s-4-hana-cloud-using-cap-sap-cloud-sdk-and-sap-fiori-elements/)
+[Part 2](https://blogs.sap.com/2020/12/20/part-2-how-to-build-an-extension-application-for-sap-s-4hana-cloud-using-cap-sap-cloud-sdk-and-sap-fiori-elements/)
 
